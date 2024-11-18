@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "crisis_summary"
+version = "0.1.0"
+description = "A package for doing great things!"
+authors = ["JaeHo Bahng"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^2.2.3"
+requests = "^2.32.3"
+ir-datasets = {git = "https://github.com/allenai/ir_datasets.git", rev = "crisisfacts"}
+pyterrier-t5 = {git = "https://github.com/terrierteam/pyterrier_t5.git"}
+
+[tool.poetry.dev-dependencies]
+[tool.semantic_release]
+version_toml = [
+    "pyproject.toml:tool.poetry.version",
+]                                                    # version location
+branch = "main"                                      # branch to make releases of
+changelog_file = "CHANGELOG.md"                      # changelog file
+build_command = "pip install poetry && poetry build" # build dists 
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
