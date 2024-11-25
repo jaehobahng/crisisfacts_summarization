@@ -142,3 +142,7 @@ dmypy.json
 .DS_Store
 
 .vscode/
+
+
+crisisfacts/
+auth/
