@@ -1,6 +1,7 @@
 import requests
 
-def get_eventsMeta(eventNoList, days):
+def get_eventsMeta(eventNoList='001', days=100):
+
 
     def getDaysForEventNo(eventNo):
 
@@ -11,6 +12,8 @@ def get_eventsMeta(eventNoList, days):
         dayList = requests.get(url).json()
 
         return dayList
+
+    eventNoList = eventNoList.split(',')
 
     eventsMeta = {}
 
