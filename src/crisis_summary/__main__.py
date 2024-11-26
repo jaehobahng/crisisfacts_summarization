@@ -19,4 +19,5 @@ import os
  
 
 load_dotenv('../../.env')
+os.environ['IR_DATASETS_HOME'] = '../../'
 api = os.getenv("OPENAI_API_KEY")

@@ -38,8 +38,6 @@ class crisis:
                     retriever.setControl("termpipelines", "Stopwords,PorterStemmer")
         
                     for _, row in queries.iterrows():
-                        # matching_index = int(queries[queries['indicative_terms'] == row['indicative_terms']].index[0])
-                        # print(ir_dataset_id, "query num : ", matching_index)
 
                         retriever_df = pd.DataFrame(retriever.search(row['indicative_terms']))
                         retriever_df = retriever_df[~retriever_df['text'].isnull()]
@@ -129,13 +127,14 @@ class crisis:
 
                 retriever = pt.BatchRetrieve(index, wmodel=model, metadata=["docno", "text"])
                 
-                monoT5 = MonoT5ReRanker() # loads castorini/monot5-base-msmarco by default
+                monoT5 = MonoT5ReRanker(verbose=False) # loads castorini/monot5-base-msmarco by default
 
                 mono_pipeline = retriever % 20 >> pt.text.get_text(pyTerrierDataset, "text") >> monoT5 % 5
+                # mono_pipeline = mono_pipeline.disable_progress_bar()
                 # duo_pipeline = mono_pipeline % 5 >> duoT5 # apply a rank cutoff of 5 from monoT5 since duoT5 is too costly to run over the full result list
                 for index, row in queries.iterrows():
-                    matching_index = int(queries[queries['indicative_terms'] == row['indicative_terms']].index[0])
-                    print(ir_dataset_id, "query num : ",matching_index)
+                    # matching_index = int(queries[queries['indicative_terms'] == row['indicative_terms']].index[0])
+                    # print(ir_dataset_id, "query num : ",matching_index)
                     retriever_df = pd.DataFrame(retriever.search(row['indicative_terms']))
                     if not retriever_df.empty:
                         result_df = mono_pipeline.transform(retriever_df).sort_values('rank',ascending=True)
@@ -233,10 +232,28 @@ class crisis:
             answer = response.choices[0].message.content
             answer_output.append(answer)
             # Print progress every 10 loops
-            # if (i + 1) % 50 == 0:
+            # if (i + 1) % 50 == 0: m
             #     print(f"Processed {i + 1} rows")
 
         df['summary'] = answer_output
+
+        # Extract 'request' from 'request_id'
+        df['request'] = df['request_id'].apply(lambda x: x.split('-r')[0])
+        
+        # Convert 'unix_timestamp' to datetime and date formats
+        df['datetime'] = df['unix_timestamp'].apply(lambda x: pd.to_datetime(x, unit='s'))
+        df['date'] = df['datetime'].apply(lambda x: x.date())
+        
+        # Subset the DataFrame
+        # df = df[['request', 'date', 'datetime', 'question', 'summary_xsum_detail', 'avg_importance']]
+
+        # Sort by avg_importance in descending order
+        df = df.sort_values(by='avg_importance', ascending=False)
+
+        # Ensure consistent data types
+        df['request'] = df['request'].astype(str)
+        df['date'] = df['date'].astype(str)
+        df['datetime'] = df['datetime'].astype(str)
 
         end_time = time.time()  # End time
         end_memory = process.memory_info().rss  # Memory usage at end (in bytes)
