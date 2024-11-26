@@ -16,8 +16,6 @@ import os
 
 # Save to csv y/n      This isn't a pre-made function maybe we can just put it as part of the main.py file
 
- 
-
 load_dotenv('../../.env')
 os.environ['IR_DATASETS_HOME'] = '../../'
 api = os.getenv("OPENAI_API_KEY")
