@@ -144,6 +144,6 @@ dmypy.json
 .vscode/
 
 
-crisisfacts/
-auth/
-output/
+crisisfacts/*
+auth/*
+output/*
