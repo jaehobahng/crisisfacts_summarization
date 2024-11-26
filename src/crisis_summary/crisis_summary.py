@@ -7,13 +7,38 @@ import time
 from rerankers import Reranker
 import openai
 
-
-
 class crisis:
+    """
+    A class designed to process crisis-related events by retrieving, reranking, 
+    and summarizing relevant documents.
+
+    Attributes:
+        eventsMeta (dict): A dictionary containing metadata for crisis events.
+    """
+    
     def __init__(self, events):
+        """
+        Initializes the crisis class with a dictionary of events.
+
+        Args:
+            events (dict): Dictionary containing metadata for events with the structure:
+                {eventId: [{"dateString": str, "requestID": str}, ...]}
+        """
         self.eventsMeta = events
 
-    def rank_rerank_colbert(self, model = 'BM25'):
+    def rank_rerank_colbert(self, model='BM25'):
+        """
+        Retrieves and reranks documents for each event using BM25 and ColBERT.
+
+        Args:
+            model (str): The retrieval model to use, default is 'BM25'.
+
+        Returns:
+            tuple: A tuple containing:
+                - final_df (pd.DataFrame): The final reranked DataFrame with added importance scores.
+                - runtime (float): Total runtime of the operation in seconds.
+                - memory_used (float): Memory used during the process in megabytes.
+        """
         process = psutil.Process(os.getpid())  # Get current process
         start_memory = process.memory_info().rss  # Memory usage at start (in bytes)
         start_time = time.time()  # Start time
@@ -26,7 +51,7 @@ class crisis:
                 try:
                     ir_dataset_id = "crisisfacts/%s/%s" % (eventId, thisDay["dateString"])
                     print(ir_dataset_id, " processing")  
-        
+
                     pyTerrierDataset = pt.get_dataset(f'irds:{ir_dataset_id}')
                     queries = pyTerrierDataset.get_topics()
                     dataset = pd.DataFrame(pyTerrierDataset.get_corpus_iter(), columns=['docno', 'text', 'unix_timestamp'])
@@ -38,21 +63,16 @@ class crisis:
                     retriever.setControl("termpipelines", "Stopwords,PorterStemmer")
         
                     for _, row in queries.iterrows():
-                        # matching_index = int(queries[queries['indicative_terms'] == row['indicative_terms']].index[0])
-                        # print(ir_dataset_id, "query num : ", matching_index)
-
                         retriever_df = pd.DataFrame(retriever.search(row['indicative_terms']))
                         retriever_df = retriever_df[~retriever_df['text'].isnull()]
                         retriever_df = retriever_df[retriever_df['rank']<50]
                         retriever_df['docid'] = retriever_df['docid'].astype(int)
-        
         
                         retriever_df['Event'] = eventId
                         retriever_df['request_id'] = thisDay['requestID']
                         retriever_df['date'] = thisDay['dateString']
                         retriever_df['q_id'] = row['qid']
                         retriever_df['question'] = row['text']
-        
         
                         if not retriever_df.empty:
                             # Rerank
@@ -73,7 +93,7 @@ class crisis:
         
                             retriever_df = retriever_df[retriever_df['rerank_rank']<=5]
         
-                            #Clean
+                            # Clean
                             result_df = retriever_df.sort_values('rerank_rank', ascending=True).reset_index(drop=True)
                             result_df = result_df.merge(dataset[['docno', 'unix_timestamp']], on='docno', how='left')
         
@@ -87,7 +107,7 @@ class crisis:
         min_max = (
             final_df.groupby(['request_id'])
             .agg(
-                min=('rerank_score','min'),
+                min=('rerank_score', 'min'),
                 max=('rerank_score', 'max')
             )
             .reset_index()
@@ -104,25 +124,44 @@ class crisis:
 
         return final_df, runtime, memory_used
 
-
     def group_doc(self, df):
+        """
+        Groups and aggregates document data for each query.
+
+        Args:
+            df (pd.DataFrame): DataFrame containing retrieved and reranked documents.
+
+        Returns:
+            pd.DataFrame: Aggregated DataFrame with combined texts, average importance, and other metadata.
+        """
         result_df = (
             df.groupby(['request_id', 'q_id'])
             .agg(
                 texts=('text', ' '.join),                     # Join all text values into a single string
                 docno_list=('docno', list),                   # Collect docno values in a list
                 avg_importance=('importance', 'mean'),        # Calculate the average importance
-                unix_timestamp =('unix_timestamp', 'min'),
-                question = ('question', 'min'),
-                query = ('query','min')
+                unix_timestamp=('unix_timestamp', 'min'),
+                question=('question', 'min'),
+                query=('query', 'min')
             )
             .reset_index()                                    # Reset index for a clean DataFrame
         )
         return result_df
 
-
     def gpt_summary(self, df, api):
-        # Set your OpenAI API key
+        """
+        Summarizes the grouped documents using OpenAI's GPT model.
+
+        Args:
+            df (pd.DataFrame): DataFrame containing grouped documents to summarize.
+            api (str): OpenAI API key for authentication.
+
+        Returns:
+            tuple: A tuple containing:
+                - df (pd.DataFrame): DataFrame with added summaries.
+                - runtime (float): Total runtime of the operation in seconds.
+                - memory_used (float): Memory used during the process in megabytes.
+        """
         openai.api_key = api
 
         process = psutil.Process(os.getpid())  # Get current process
@@ -136,7 +175,7 @@ class crisis:
 
             prompt = f"""
             You are a helpful assistant. Answer the question based only on the text provided below. 
-            If no answers can be found at all, return "unanswerable"
+            If no answers can be found at all, return "unanswerable".
 
             Don't make the responses conversational.
             Expressions like hundreds of thousands can be answers to questions asking how many or how much.
@@ -162,9 +201,6 @@ class crisis:
             )
             answer = response.choices[0].message.content
             answer_output.append(answer)
-            # Print progress every 10 loops
-            # if (i + 1) % 50 == 0:
-            #     print(f"Processed {i + 1} rows")
 
         df['summary'] = answer_output
 
