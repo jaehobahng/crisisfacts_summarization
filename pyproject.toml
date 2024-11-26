@@ -12,6 +12,8 @@ pandas = "^2.2.3"
 requests = "^2.32.3"
 ir-datasets = {git = "https://github.com/allenai/ir_datasets.git", rev = "crisisfacts"}
 pyterrier-t5 = {git = "https://github.com/terrierteam/pyterrier_t5.git"}
+rerankers = "^0.6.0"
+openai = "^1.55.1"
 
 [tool.poetry.dev-dependencies]
 [tool.semantic_release]
