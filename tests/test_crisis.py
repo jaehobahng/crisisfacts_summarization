@@ -13,7 +13,6 @@ def test_columns():
 
     final_df, time_taken, memory_used = mine.rank_rerank_colbert(model = 'BM25')
 
-    # final_df.shape[1]
+    final_df.shape[1]
     
-    # assert final_df.shape[1] == 20  # One duplicate found
-    assert 1==1
+    assert final_df.shape[1] == 20  # One duplicate found
