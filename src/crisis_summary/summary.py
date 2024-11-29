@@ -9,6 +9,9 @@ import openai
 
 # $env:PYTHONUTF8 = "1"
 
+
+
+
 class crisis:
     def __init__(self, events):
         self.eventsMeta = events
@@ -129,14 +132,16 @@ class crisis:
                 
                 monoT5 = MonoT5ReRanker(verbose=False) # loads castorini/monot5-base-msmarco by default
 
-                mono_pipeline = retriever % 20 >> pt.text.get_text(pyTerrierDataset, "text") >> monoT5 % 5
-                # mono_pipeline = mono_pipeline.disable_progress_bar()
-                # duo_pipeline = mono_pipeline % 5 >> duoT5 # apply a rank cutoff of 5 from monoT5 since duoT5 is too costly to run over the full result list
+                mono_pipeline = retriever % 50 >> pt.text.get_text(pyTerrierDataset, "text") >> monoT5 % 5
+
                 for index, row in queries.iterrows():
                     # matching_index = int(queries[queries['indicative_terms'] == row['indicative_terms']].index[0])
                     # print(ir_dataset_id, "query num : ",matching_index)
                     retriever_df = pd.DataFrame(retriever.search(row['indicative_terms']))
                     if not retriever_df.empty:
+
+                        temp_rank = retriever_df['rank']
+
                         result_df = mono_pipeline.transform(retriever_df).sort_values('rank',ascending=True)
                         result_df = result_df.reset_index(drop=True)
 
@@ -149,7 +154,16 @@ class crisis:
                         result_df['q_id'] = row['qid']
                         result_df['question'] = row['text']
 
+
+                        result_df = result_df.rename(columns={
+                            'rank': 'rerank_rank'     # Rename rank to rerank_rank
+                        })
+
+                        result_df['rank'] = temp_rank
+
                         final_df = pd.concat([final_df, result_df], ignore_index=True)
+
+
 
         final_df['formatted_datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
 
