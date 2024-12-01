@@ -21,10 +21,9 @@ with open('./auth/crisisfacts.json', 'w') as f:
     json.dump(credentials, f)
 
 
-import os
-os.environ['IR_DATASETS_HOME'] = './'
-
 def test_columns():
+    
+    os.environ['IR_DATASETS_HOME'] = './'
 
     eventsMeta = get_eventsMeta(eventNoList='001', days=1)
 
