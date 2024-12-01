@@ -6,22 +6,6 @@ import ir_datasets
 import json
 import os
 
-@pytest.fixture(scope='session', autouse=True)
-def setup_auth():
-    # Create the 'auth' directory
-    os.makedirs('auth', exist_ok=True)
-
-    # Write the credentials to a file
-    credentials = {
-        "institution": "Georgetown University",
-        "contactname": "JaeHo Bahng",
-        "email": "jaheo127@gmail.com",
-        "institutiontype": "Academic"
-    }
-    with open('./auth/crisisfacts.json', 'w') as f:
-        json.dump(credentials, f)
-
-
 os.environ['IR_DATASETS_HOME'] = './'
 
 # Ensure the dataset directory exists
@@ -30,21 +14,17 @@ if not os.path.exists(os.environ['IR_DATASETS_HOME']):
 
 def test_columns():
 
+    os.makedirs('auth', exist_ok=True)
 
+    credentials = {
+        "institution": "Georgetown University", # University, Company or Public Agency Name
+        "contactname": "JaeHo Bahng", # Your Name
+        "email": "jaheo127@gmail.com", # A contact email address
+        "institutiontype": "Academic" # Either 'Research', 'Industry', or 'Public Sector'
+    }
 
-    # credentials = {
-    #     "institution": "Georgetown University", # University, Company or Public Agency Name
-    #     "contactname": "JaeHo Bahng", # Your Name
-    #     "email": "jaheo127@gmail.com", # A contact email address
-    #     "institutiontype": "Academic" # Either 'Research', 'Industry', or 'Public Sector'
-    # }
-
-    # # Write this to a file so it can be read when needed
-    # import json
-    # import os
-
-    # with open('./auth/crisisfacts.json', 'w') as f:
-    #     json.dump(credentials, f)
+    with open('./auth/crisisfacts.json', 'w') as f:
+        json.dump(credentials, f)
 
     os.environ['IR_DATASETS_HOME'] = './'
 
