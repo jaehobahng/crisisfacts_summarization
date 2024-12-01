@@ -38,8 +38,8 @@ jobs:
         ls -l ./  # Assuming IR_DATASETS_HOME is './'
 
     - name: Run pytest
-      # env: # Set environment variables globally for the job
-      #   IR_DATASETS_HOME: "./"
+      env: # Set environment variables globally for the job
+        IR_DATASETS_HOME: "./"
       run: poetry run pytest
 
 
