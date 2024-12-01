@@ -17,6 +17,7 @@ class crisis:
         self.eventsMeta = events
 
     def rank_rerank_colbert(self, model = 'BM25'):
+        os.environ['IR_DATASETS_HOME'] = './'
         process = psutil.Process(os.getpid())  # Get current process
         start_memory = process.memory_info().rss  # Memory usage at start (in bytes)
         start_time = time.time()  # Start time
@@ -31,7 +32,8 @@ class crisis:
                     print(ir_dataset_id, " processing")  
         
                     pyTerrierDataset = pt.get_dataset(f'irds:{ir_dataset_id}')
-                    queries = pyTerrierDataset.get_topics()
+                    # queries = pyTerrierDataset.get_topics()
+                    queries = pd.read_csv(f'crisisfacts/{eventId}.csv')
                     dataset = pd.DataFrame(pyTerrierDataset.get_corpus_iter(), columns=['docno', 'text', 'unix_timestamp'])
         
                     indexer = pt.IterDictIndexer("None", type=pt.index.IndexingType(3), meta=["docno", "text"], meta_lengths=[0, 200])
@@ -51,7 +53,7 @@ class crisis:
                         retriever_df['Event'] = eventId
                         retriever_df['request_id'] = thisDay['requestID']
                         retriever_df['date'] = thisDay['dateString']
-                        retriever_df['q_id'] = row['qid']
+                        retriever_df['q_id'] = row['query_id']
                         retriever_df['question'] = row['text']
         
         

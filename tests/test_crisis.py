@@ -40,6 +40,10 @@ def test_columns():
             ir_dataset_id = "crisisfacts/%s/%s" % (eventId, thisDay["dateString"])        
             
             dataset = ir_datasets.load(ir_dataset_id)
+            itemsAsDataFrame = dataset.docs_iter()
+            queries = dataset.queries_iter()
+
+
 
     mine = crisis(events = eventsMeta)
 
