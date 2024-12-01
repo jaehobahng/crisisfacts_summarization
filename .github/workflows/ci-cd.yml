@@ -6,8 +6,8 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
-    env: # Set environment variables globally for the job
-      IR_DATASETS_HOME: "./"
+    # env: # Set environment variables globally for the job
+    #   IR_DATASETS_HOME: "./"
 
     steps:
     - name: Set up Python 3.11
@@ -25,18 +25,18 @@ jobs:
     - name: Install package
       run: poetry install
 
-    - name: Create auth directory and credentials
-      run: |
-        mkdir -p auth
-        echo '{"institution": "Georgetown University", "contactname": "JaeHo Bahng", "email": "jaheo127@gmail.com", "institutiontype": "Academic"}' > auth/crisisfacts.json
-        ls -l ./  # Assuming IR_DATASETS_HOME is './'
+    # - name: Create auth directory and credentials
+    #   run: |
+    #     mkdir -p auth
+    #     echo '{"institution": "Georgetown University", "contactname": "JaeHo Bahng", "email": "jaheo127@gmail.com", "institutiontype": "Academic"}' > auth/crisisfacts.json
+    #     ls -l ./  # Assuming IR_DATASETS_HOME is './'
 
-    - name: Debug environment
-      run: |
-        echo "Environment variables:"
-        env
-        echo "IR_DATASETS_HOME contents:"
-        ls -l ./  # Assuming IR_DATASETS_HOME is './'
+    # - name: Debug environment
+    #   run: |
+    #     echo "Environment variables:"
+    #     env
+    #     echo "IR_DATASETS_HOME contents:"
+    #     ls -l ./  # Assuming IR_DATASETS_HOME is './'
 
     - name: Run pytest
       env: # Set environment variables globally for the job
