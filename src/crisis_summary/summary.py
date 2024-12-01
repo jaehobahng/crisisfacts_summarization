@@ -33,7 +33,7 @@ data = [
 ]
 
 # Create DataFrame
-event_df = pd.DataFrame(data, columns=["ID", "Event Name"])
+event_df = pd.DataFrame(data, columns=["ID", "EventName"])
 
 
 class crisis:
@@ -220,7 +220,7 @@ class crisis:
 
     def group_doc(self, df):
         result_df = (
-            df.groupby(['request_id', 'q_id'])
+            df.groupby(['request_id', 'q_id', 'Event', 'EventName'])
             .agg(
                 texts=('text', ' '.join),                     # Join all text values into a single string
                 docno_list=('docno', list),                   # Collect docno values in a list
@@ -278,26 +278,26 @@ class crisis:
             # Print progress every 10 loops
             # if (i + 1) % 50 == 0: m
             #     print(f"Processed {i + 1} rows")
-
-        df['summary'] = answer_output
+        df_mod = df.copy()
+        df_mod['summary'] = answer_output
 
         # Extract 'request' from 'request_id'
-        df['request'] = df['request_id'].apply(lambda x: x.split('-r')[0])
+        df_mod['request'] = df_mod['request_id'].apply(lambda x: x.split('-r')[0])
         
         # Convert 'unix_timestamp' to datetime and date formats
-        df['datetime'] = df['unix_timestamp'].apply(lambda x: pd.to_datetime(x, unit='s'))
-        df['date'] = df['datetime'].apply(lambda x: x.date())
+        df_mod['datetime'] = df_mod['unix_timestamp'].apply(lambda x: pd.to_datetime(x, unit='s'))
+        df_mod['date'] = df_mod['datetime'].apply(lambda x: x.date())
         
         # Subset the DataFrame
         # df = df[['request', 'date', 'datetime', 'question', 'summary_xsum_detail', 'avg_importance']]
 
         # Sort by avg_importance in descending order
-        df = df.sort_values(by='avg_importance', ascending=False)
+        df_mod = df_mod.sort_values(by='avg_importance', ascending=False)
 
         # Ensure consistent data types
-        df['request'] = df['request'].astype(str)
-        df['date'] = df['date'].astype(str)
-        df['datetime'] = df['datetime'].astype(str)
+        df_mod['request'] = df_mod['request'].astype(str)
+        df_mod['date'] = df_mod['date'].astype(str)
+        df_mod['datetime'] = df_mod['datetime'].astype(str)
 
         end_time = time.time()  # End time
         end_memory = process.memory_info().rss  # Memory usage at end (in bytes)
@@ -307,4 +307,4 @@ class crisis:
         memory_used = (end_memory - start_memory) / 1024 / 1024  # Convert bytes to MB
 
         # Return results and performance metrics
-        return df, runtime, memory_used
+        return df_mod, runtime, memory_used
