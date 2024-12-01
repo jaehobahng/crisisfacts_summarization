@@ -32,3 +32,10 @@ jobs:
 
     - name: Run pytest
       run: poetry run pytest
+
+    - name: Debug environment
+      run: |
+        echo "Environment variables:"
+        env
+        echo "IR_DATASETS_HOME contents:"
+        ls -l ./  # Assuming IR_DATASETS_HOME is './'
