@@ -27,15 +27,14 @@ jobs:
         mkdir -p auth
         echo '{"institution": "Georgetown University", "contactname": "JaeHo Bahng", "email": "jaheo127@gmail.com", "institutiontype": "Academic"}' > auth/crisisfacts.json
 
-    # - name: Install deduplication
-    #   run: poetry pip install -e .
-
-    - name: Run pytest
-      run: poetry run pytest
-
     - name: Debug environment
       run: |
         echo "Environment variables:"
         env
         echo "IR_DATASETS_HOME contents:"
         ls -l ./  # Assuming IR_DATASETS_HOME is './'
+
+    - name: Run pytest
+      run: poetry run pytest
+
+
