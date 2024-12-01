@@ -14,6 +14,8 @@ if not os.path.exists(os.environ['IR_DATASETS_HOME']):
 
 def test_columns():
 
+    os.environ['IR_DATASETS_HOME'] = './'
+
     os.makedirs('auth', exist_ok=True)
 
     credentials = {
