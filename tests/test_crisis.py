@@ -2,6 +2,25 @@ from crisis_summary.summary import crisis
 from crisis_summary.utils.util import get_eventsMeta
 from rerankers import Reranker
 
+import json
+import os
+
+# Create the 'auth' directory
+os.makedirs('auth', exist_ok=True)
+
+credentials = {
+    "institution": "Georgetown University", # University, Company or Public Agency Name
+    "contactname": "JaeHo Bahng", # Your Name
+    "email": "jaheo127@gmail.com", # A contact email address
+    "institutiontype": "Academic" # Either 'Research', 'Industry', or 'Public Sector'
+}
+
+# Write this to a file so it can be read when needed
+
+with open('./auth/crisisfacts.json', 'w') as f:
+    json.dump(credentials, f)
+
+
 import os
 os.environ['IR_DATASETS_HOME'] = './'
 
