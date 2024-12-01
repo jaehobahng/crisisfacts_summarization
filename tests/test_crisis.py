@@ -51,4 +51,4 @@ def test_columns():
 
     final_df.shape[1]
     
-    assert final_df.shape[1] == 20
+    assert final_df.shape[1] == 22
