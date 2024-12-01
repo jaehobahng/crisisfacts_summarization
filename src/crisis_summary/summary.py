@@ -9,10 +9,35 @@ import openai
 
 # $env:PYTHONUTF8 = "1"
 
+import pandas as pd
 
+data = [
+    ("001", "Lilac Wildfire 2017"),
+    ("002", "Cranston Wildfire 2018"),
+    ("003", "Holy Wildfire 2018"),
+    ("004", "Hurricane Florence 2018"),
+    ("005", "2018 Maryland Flood"),
+    ("006", "Saddleridge Wildfire 2019"),
+    ("007", "Hurricane Laura 2020"),
+    ("008", "Hurricane Sally 2020"),
+    ("009", "Beirut Explosion 2020"),
+    ("010", "Houston Explosion 2020"),
+    ("011", "Rutherford TN Floods 2020"),
+    ("012", "TN Derecho 2020"),
+    ("013", "Edenville Dam Fail 2020"),
+    ("014", "Hurricane Dorian 2019"),
+    ("015", "Kincade Wildfire 2019"),
+    ("016", "Easter Tornado Outbreak 2020"),
+    ("017", "Tornado Outbreak April 2020"),
+    ("018", "Tornado Outbreak March 2020"),
+]
+
+# Create DataFrame
+event_df = pd.DataFrame(data, columns=["ID", "Event Name"])
 
 
 class crisis:
+    global df
     def __init__(self, events):
         self.eventsMeta = events
 
@@ -61,13 +86,13 @@ class crisis:
                             # Rerank
                             result = ranker.rank(query=row['indicative_terms'], docs=retriever_df['text'], doc_ids=retriever_df['docid'])
                             
-                            rereank_score = [i.score for i in result.results]
+                            rerank_score = [i.score for i in result.results]
                             rerank_rank = [i.rank for i in result.results]
                             rerank_doc = [i.doc_id for i in result.results]
         
                             # Creating a DataFrame
                             df = pd.DataFrame({
-                                'rerank_score': rereank_score,
+                                'rerank_score': rerank_score,
                                 'rerank_rank': rerank_rank,
                                 'rerank_doc': rerank_doc
                             })
@@ -86,6 +111,8 @@ class crisis:
                     continue
 
         final_df['formatted_datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
+
+        final_df = final_df.merge(event_df, left_on="Event", right_on="ID", how='left')
 
         min_max = (
             final_df.groupby(['request_id'])
@@ -168,6 +195,7 @@ class crisis:
 
 
         final_df['formatted_datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
+        final_df = final_df.merge(event_df, left_on="Event", right_on="ID", how='left')
 
         min_max = (
             final_df.groupby(['request_id'])
