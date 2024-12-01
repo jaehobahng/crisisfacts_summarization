@@ -1,6 +1,7 @@
 from crisis_summary.summary import crisis
 from crisis_summary.utils.util import get_eventsMeta
 from rerankers import Reranker
+import ir_datasets
 
 import json
 import os
@@ -13,6 +14,15 @@ def test_columns():
     os.environ['IR_DATASETS_HOME'] = './'
 
     eventsMeta = get_eventsMeta(eventNoList='001', days=1)
+
+    for eventId,dailyInfo in eventsMeta.items():
+
+        for thisDay in dailyInfo:
+            
+            requestID = thisDay["requestID"]
+            ir_dataset_id = "crisisfacts/%s/%s" % (eventId, thisDay["dateString"])        
+            
+            dataset = ir_datasets.load(ir_dataset_id)
 
     mine = crisis(events = eventsMeta)
 
