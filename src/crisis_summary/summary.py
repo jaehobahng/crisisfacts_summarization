@@ -43,7 +43,7 @@ class crisis:
     Attributes:
         eventsMeta (dict): Metadata about events, including their IDs and daily information.
     """
-    global df
+    global event_df
     def __init__(self, events):
         """
         Initialize the crisis class with events metadata.
