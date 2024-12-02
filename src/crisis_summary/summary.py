@@ -37,11 +37,32 @@ event_df = pd.DataFrame(data, columns=["ID", "EventName"])
 
 
 class crisis:
+    """
+    A class to manage and analyze crisis events using ranking, reranking, and summarization techniques.
+
+    Attributes:
+        eventsMeta (dict): Metadata about events, including their IDs and daily information.
+    """
     global df
     def __init__(self, events):
+        """
+        Initialize the crisis class with events metadata.
+
+        Args:
+            events (dict): Dictionary containing metadata for various events.
+        """
         self.eventsMeta = events
 
     def rank_rerank_colbert(self, model = 'BM25'):
+        """
+        Rank and rerank crisis-related documents using ColBERT model.
+
+        Args:
+            model (str): Initial ranking model to use (default is 'BM25').
+
+        Returns:
+            tuple: Final DataFrame containing ranked and reranked documents, runtime (in seconds), and memory used (in MB).
+        """
         os.environ['IR_DATASETS_HOME'] = './'
         process = psutil.Process(os.getpid())  # Get current process
         start_memory = process.memory_info().rss  # Memory usage at start (in bytes)
@@ -137,6 +158,15 @@ class crisis:
 
 
     def rank_rerank_T5(self, model = 'BM25'):
+        """
+        Rank and rerank crisis-related documents using T5 reranking pipeline.
+
+        Args:
+            model (str): Initial ranking model to use (default is 'BM25').
+
+        Returns:
+            tuple: Final DataFrame containing ranked and reranked documents, runtime (in seconds), and memory used (in MB).
+        """
         process = psutil.Process(os.getpid())  # Get current process
         start_memory = process.memory_info().rss  # Memory usage at start (in bytes)
         start_time = time.time()  # Start time
@@ -220,6 +250,15 @@ class crisis:
 
 
     def group_doc(self, df):
+        """
+        Group documents by request ID, query ID, and event attributes.
+
+        Args:
+            df (pd.DataFrame): DataFrame containing ranked and reranked document data.
+
+        Returns:
+            pd.DataFrame: Aggregated DataFrame with grouped document text, metadata, and average importance score.
+        """
         result_df = (
             df.groupby(['request_id', 'q_id', 'Event', 'EventName'])
             .agg(
@@ -236,6 +275,16 @@ class crisis:
 
 
     def gpt_summary(self, df, api):
+        """
+        Generate summaries for grouped documents using GPT model.
+
+        Args:
+            df (pd.DataFrame): DataFrame containing grouped document data.
+            api (str): OpenAI API key for accessing GPT models.
+
+        Returns:
+            tuple: DataFrame with generated summaries, runtime (in seconds), and memory used (in MB).
+        """
         # Set your OpenAI API key
         openai.api_key = api
 
