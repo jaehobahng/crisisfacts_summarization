@@ -101,6 +101,9 @@ class crisis:
                         retriever_df['date'] = thisDay['dateString']
                         retriever_df['q_id'] = row['query_id']
                         retriever_df['question'] = row['text']
+
+                        retriever_df['event_title'] = row['event_title']
+                        retriever_df['trecis_category_mapping'] = row['trecis_category_mapping']
         
         
                         if not retriever_df.empty:
@@ -132,8 +135,7 @@ class crisis:
                     continue
 
         final_df['formatted_datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
-
-        final_df = final_df.merge(event_df, left_on="Event", right_on="ID", how='left')
+        # final_df = final_df.merge(event_df, left_on="Event", right_on="ID", how='left')
 
         min_max = (
             final_df.groupby(['request_id'])
@@ -214,6 +216,9 @@ class crisis:
                         result_df['q_id'] = row['query_id']
                         result_df['question'] = row['text']
 
+                        result_df['event_title'] = row['event_title']
+                        result_df['trecis_category_mapping'] = row['trecis_category_mapping']
+
 
                         result_df = result_df.rename(columns={
                             'rank': 'rerank_rank'     # Rename rank to rerank_rank
@@ -226,7 +231,7 @@ class crisis:
 
 
         final_df['formatted_datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
-        final_df = final_df.merge(event_df, left_on="Event", right_on="ID", how='left')
+        # final_df = final_df.merge(event_df, left_on="Event", right_on="ID", how='left')
 
         min_max = (
             final_df.groupby(['request_id'])
@@ -260,7 +265,7 @@ class crisis:
             pd.DataFrame: Aggregated DataFrame with grouped document text, metadata, and average importance score.
         """
         result_df = (
-            df.groupby(['request_id', 'q_id', 'Event', 'EventName'])
+            df.groupby(['request_id', 'q_id', 'Event', 'event_title'])
             .agg(
                 texts=('text', ' '.join),                     # Join all text values into a single string
                 docno_list=('docno', list),                   # Collect docno values in a list
