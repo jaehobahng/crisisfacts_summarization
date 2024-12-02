@@ -17,7 +17,6 @@ format: pdf
     - compare ranking model with reranking model and find MSE
     - Analyze time / memory
  - Reranking model comparison
-    - 
 
 **3. Summarization Process**
  - Compare different summarization methods
