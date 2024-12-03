@@ -147,5 +147,19 @@ dmypy.json
 
 
 crisisfacts/*
-auth/*
+
+# Allow the 001 folder
+!crisisfacts/001/
+
+/crisisfacts/001/*
+!/crisisfacts/001/2017-12-07/
+
+!crisisfacts/001.csv
+
+# Allow the 2017-12-07 folder
+# !crisisfacts/001/2017-12-07/
+
+
+
+# auth/*
 output/*

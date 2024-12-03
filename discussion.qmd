@@ -1,0 +1,47 @@
+---
+title: "Discussion"
+date: "`r Sys.Date()`"
+format: pdf
+---
+
+# Discussion
+
+**1. EDA of Dataset**
+ - How many days in each event
+ - How many documents in each day/event
+ - How long are the documents
+ - How many queries for each event (General/Specific)
+
+**2. Ranking / Reranking Process**
+ - Ranking model comparison
+    - compare ranking model with reranking model and find MSE
+    - Analyze time / memory
+ - Reranking model comparison
+    - 
+
+**3. Summarization Process**
+ - Compare different summarization methods
+    - Don't think there will be a metric so comparing one example across all methods?
+
+**5. Evaluation**
+ - Wiki / NIST evaluation method given in TREC
+ - If we have time find if there is a way to measure redundancy
+
+**5. Challenges / Further improvements**
+ - Tuning hyperparameters for ranking engine.
+ - Evaluate redundancy within summaries
+ - Prompt engineering to find optimized output and minimize unanswerable
+
+
+
+
+
+
+
+
+- Include all of your analysis in a PDF in your repository called discussion.pdf. The discussion.pdf should be no longer than 4 pages, excluding references, and it will include your comments, graphics, and overall analysis. Your general structure might be something like:
+    - exploratory data analysis over your dataset (e.g., collection size, collection characteristics, …)
+    - details of engineering decisions such as preprocessing (e.g., discussing how you preprocess documents, did you use techniques like deduplication or other forms of preprocessing, …)
+    - details of your search algorithms, possibly including improvements (e.g., you don’t need to elaborate in detail on the models you use, but you should make sure you provide baselines and talk about improvements you’ve made, just as we did in Assignment 2)
+    - visualizations, results, and overall analysis (e.g., the survey papers provide examples of ways to visualize results and in class we learned about evaluating retrieval systems. If you choose to focus on the engineering of the problem (bigger dataset without an evaluation), then you will discuss how that looked for your team).
+    - challenges you encountered and conclusions
