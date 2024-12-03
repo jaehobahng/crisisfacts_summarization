@@ -53,22 +53,22 @@ format: pdf
    reference : https://www.answer.ai/posts/2024-08-13-small-but-mighty-colbert.html
 
    - Colbert
-      | text                                                                                                                      | rerank_rank | importance | query                     |
-      |---------------------------------------------------------------------------------------------------------------------------|-------------|------------|---------------------------|
-      | [[462655153,C]] [[462655153,C]] Evacuation Shelters An overnight shelter was set up for residents at the East Valley Community Center on 2245 E. Valley Parkway in Escondido. | 1           | 0.382477   | evacuation center shelters |
-      | The Red Cross-operated full-service evacuation shelter is located at East Valley Community Center (2245 E. Valley P https://t.co/j04N921sd | 2           | 0.381914   | evacuation center shelters |
-      | @CALFIRESANDIEGO: #LilacFire [update] 3 Temporary evacuation shelters have been set up: Fallbrook High School Pechanga Casino Pala Casino East Valley Community Center in Escondido is where the ev... | 3           | 0.380616   | evacuation center shelters |
-      | EVACUATION SHELTERS EL CAJON: Bostonia Park & Recreation Center (1049 Bostonia Street)* SAN MARCOS: Palomar College (1140 West Mission Road)*Small pet-friendly As of Saturday, the only she... | 4           | 0.376959   | evacuation center shelters |
-      | ***Temporary Evacuation Shelters*** #LilacFire https://t.co/j43zUXR4ze                                                    | 5           | 0.373286   | evacuation center shelters |
+      | text                                                                                                                                                                                                   | rerank | importance | query                      |
+      |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|------------|----------------------------|
+      | [[462655153,C]] [[462655153,C]] Evacuation Shelters An overnight shelter was set up for residents at the East Valley Community Center on 2245 E. Valley Parkway in Escondido.                          | 1      | 0.382477   | evacuation center shelters |
+      | The Red Cross-operated full-service evacuation shelter is located at East Valley Community Center (2245 E. Valley P https://t.co/j04N921sd                                                             | 2      | 0.381914   | evacuation center shelters |
+      | @CALFIRESANDIEGO: #LilacFire [update] 3 Temporary evacuation shelters have been set up: Fallbrook High School Pechanga Casino Pala Casino East Valley Community Center in Escondido is where the ev... | 3      | 0.380616   | evacuation center shelters |
+      | EVACUATION SHELTERS EL CAJON: Bostonia Park & Recreation Center (1049 Bostonia Street)* SAN MARCOS: Palomar College (1140 West Mission Road)*Small pet-friendly As of Saturday, the only she...        | 4      | 0.376959   | evacuation center shelters |
+      | ***Temporary Evacuation Shelters*** #LilacFire https://t.co/j43zUXR4ze                                                                                                                                 | 5      | 0.373286   | evacuation center shelters |
 
    - T5
-      | text                                                                                                                      | rerank_rank | importance | query                     |
-      |---------------------------------------------------------------------------------------------------------------------------|-------------|------------|---------------------------|
-      | EVACUATION SHELTERS EL CAJON: Bostonia Park & Recreation Center (1049 Bostonia Street)* SAN MARCOS: Palomar College (1140 West Mission Road)*Small pet-friendly As of Saturday, the only she... | 1           | 1.000000   | evacuation center shelters |
-      | [[462655153,C]] [[462655153,C]] Evacuation Shelters An overnight shelter was set up for residents at the East Valley Community Center on 2245 E. Valley Parkway in Escondido. | 2           | 0.999964   | evacuation center shelters |
-      | The Red Cross-operated full-service evacuation shelter is located at East Valley Community Center (2245 E. Valley P... https://t.co/j04N921sd | 3           | 0.999836   | evacuation center shelters |
-      | @CALFIRESANDIEGO: #LilacFire [update] 3 Temporary evacuation shelters have been set up: Fallbrook High School Pechanga Casino Pala Casino East Valley Community Center in Escondido is where the ev... | 4           | 0.999406   | evacuation center shelters |
-      | Mandatory evacuations were in place for surrounding areas, while evacuation shelters were set up at Fallbrook High School, Pala Casino and East Valley Community Center. | 5           | 0.999263   | evacuation center shelters |
+      | text                                                                                                                                                                                                   | rerank | importance | query                      |
+      |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|------------|----------------------------|
+      | EVACUATION SHELTERS EL CAJON: Bostonia Park & Recreation Center (1049 Bostonia Street)* SAN MARCOS: Palomar College (1140 West Mission Road)*Small pet-friendly As of Saturday, the only she...        | 1      | 1.000000   | evacuation center shelters |
+      | [[462655153,C]] [[462655153,C]] Evacuation Shelters An overnight shelter was set up for residents at the East Valley Community Center on 2245 E. Valley Parkway in Escondido.                          | 2      | 0.999964   | evacuation center shelters |
+      | The Red Cross-operated full-service evacuation shelter is located at East Valley Community Center (2245 E. Valley P... https://t.co/j04N921sd                                                          | 3      | 0.999836   | evacuation center shelters |
+      | @CALFIRESANDIEGO: #LilacFire [update] 3 Temporary evacuation shelters have been set up: Fallbrook High School Pechanga Casino Pala Casino East Valley Community Center in Escondido is where the ev... | 4      | 0.999406   | evacuation center shelters |
+      | Mandatory evacuations were in place for surrounding areas, while evacuation shelters were set up at Fallbrook High School, Pala Casino and East Valley Community Center.                               | 5      | 0.999263   | evacuation center shelters |
 
 
 **3. Summarization Process**
