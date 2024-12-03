@@ -7,6 +7,10 @@ import time
 from rerankers import Reranker
 import openai
 
+from transformers import pipeline
+from joblib import Parallel, delayed
+import multiprocessing
+
 # $env:PYTHONUTF8 = "1"
 
 import pandas as pd
@@ -363,3 +367,46 @@ class crisis:
 
         # Return results and performance metrics
         return df_mod, runtime, memory_used
+
+    def bart_summary(self, df):
+
+        process = psutil.Process(os.getpid())  # Get current process
+        start_memory = process.memory_info().rss  # Memory usage at start (in bytes)
+        start_time = time.time()  # Start time
+        
+        num_cores = multiprocessing.cpu_count()
+        num_batches = num_cores * 2
+        
+        # Split the dataset into batches
+        batches = np.array_split(df['texts'], num_batches)
+        
+        # Function to clean and summarize text
+        def clean_and_summarize(text, summarizer):
+            # Remove hashtags, URLs, and mentions
+            cleaned_text = re.sub(r'#\S+|https?://\S+|@\S+', '', text)
+            # Generate summary
+            summary = summarizer(cleaned_text, max_length=52, min_length=30)
+            return summary[0]['summary_text']
+        
+        # Wrapper function for batch processing
+        def process_batch(texts, summarizer):
+            return [clean_and_summarize(text, summarizer) for text in texts]
+        
+        # Apply parallel processing
+        results = Parallel(n_jobs=num_cores)(
+            delayed(process_batch)(batch.tolist(), pega_summarizer) for batch in batches
+        )
+        
+        # Combine results into the DataFrame
+        df['summary'] = [summary for batch_result in results for summary in batch_result]
+
+        end_time = time.time()  # End time
+        end_memory = process.memory_info().rss  # Memory usage at end (in bytes)
+
+        # Calculate metrics
+        runtime = end_time - start_time
+        memory_used = (end_memory - start_memory) / 1024 / 1024  # Convert bytes to MB
+
+        return df, runtime, memory_used
+
+        
