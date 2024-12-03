@@ -19,7 +19,7 @@ def test_colbert_columns():
 
     final_df.shape[1]
     
-    assert final_df.shape[1] == 22
+    assert final_df.shape[1] == 23
     assert final_df['Event'].unique() == '001'
 
 def test_T5_columns():
@@ -34,5 +34,5 @@ def test_T5_columns():
 
     final_df.shape[1]
     
-    assert final_df.shape[1] == 20
+    assert final_df.shape[1] == 21
     assert final_df['Event'].unique() == '001'
