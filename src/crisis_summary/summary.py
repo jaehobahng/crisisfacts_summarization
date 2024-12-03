@@ -131,7 +131,7 @@ class crisis:
         
                             # Append to final_df
                             final_df = pd.concat([final_df, result_df], ignore_index=True)
-                            print(final_df.head())
+
                 except:
                     continue
 
