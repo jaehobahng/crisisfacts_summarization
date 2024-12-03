@@ -159,7 +159,7 @@ crisisfacts/*
 # Allow the 2017-12-07 folder
 # !crisisfacts/001/2017-12-07/
 
-
+crisis_log.txt
 
 # auth/*
 output/*

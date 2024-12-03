@@ -14,10 +14,62 @@ format: pdf
 
 **2. Ranking / Reranking Process**
  - Ranking model comparison
-    - compare ranking model with reranking model and find MSE
-    - Analyze time / memory
+   | model         | memory    | time      | MSE        |
+   |---------------|-----------|-----------|------------|
+   | BM25          | 50.781250 | 6.514025  | 216.637500 |
+   | DFRee         | 32.414062 | 11.001296 | 389.604167 |
+   | DPH           | 38.562500 | 9.705055  | 404.720833 |
+   | DirichletLM   | 85.347656 | 10.221884 | 297.254167 |
+   | Hiemstra_LM   | 37.957031 | 9.004418  | 199.220833 |
+   | InL2          | 89.050781 | 9.054682  | 222.350000 |
+   | PL2           | 42.320312 | 6.021144  | 218.820833 |
+
+
+   | text                                                                                             | rank | rerank_rank | model |  SE  | 
+   |--------------------------------------------------------------------------------------------------|------|-------------|-------|------|
+   | Full containment is not expected until early January.                                            | 1    | 1           | BM25  |  0   | 
+   | #lilacfire is now 175 acres 0 containment #SanDiego County                                       | 14   | 2           | BM25  |  144 | 
+   | Cal Fire reaches 100 percent containment on Lilac Fire                                           | 13   | 3           | BM25  |  100 | 
+   | JUST IN: 500 acres, 0% Containment. #Breaking #LilacFire @fox5sandiego https://t.co/rHDRSaUwIC   | 37   | 4           | BM25  | 1089 | 
+   | As of Dec 6th, @ 1pm- #ThomasFire has burned over 65,000 acres and has 0% containment.           | 31   | 5           | BM25  |  676 | 
+
+
+   | text                                                                                                              | rank | rerank_rank | model | SE   |
+   |-------------------------------------------------------------------------------------------------------------------|------|-------------|-------|------|
+   | JUST IN: 500 acres, 0% Containment. #Breaking #LilacFire @fox5sandiego https://t.co/rHDRSaUwIC                    | 10   | 1           | DFRee | 81   |
+   | As of Dec 6th, @ 1pm- #ThomasFire has burned over 65,000 acres and has 0% containment.                            | 4    | 2           | DFRee | 4    |
+   | Fires have now hit San Diego County ... lets hope for a quick containment https://t.co/CqMGZhJxXo                 | 38   | 3           | DFRee | 1225 |
+   | #LilacFire Update: 100-150 Acres and 0% Containment https://t.co/kjdaaahl6l                                       | 25   | 4           | DFRee | 441  |
+   | So far the fire has not reached Oceanside or Vista. Praying they get containment soon! https://t.co/I3JyzDmGDY    | 11   | 5           | DFRee | 36   |
+
+
  - Reranking model comparison
-    - 
+
+   | model   | memory       | time      |
+   |---------|--------------|-----------|
+   | COLBERT | 798.367188   | 13.036193 |
+   | T5      | 1298.781250  | 32.529773 |
+
+   reference : https://www.answer.ai/posts/2024-08-13-small-but-mighty-colbert.html
+
+   - Colbert
+      | text                                                                                                                                                                                                   | rerank | importance | query                      |
+      |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|------------|----------------------------|
+      | [[462655153,C]] [[462655153,C]] Evacuation Shelters An overnight shelter was set up for residents at the East Valley Community Center on 2245 E. Valley Parkway in Escondido.                          | 1      | 0.382477   | evacuation center shelters |
+      | The Red Cross-operated full-service evacuation shelter is located at East Valley Community Center (2245 E. Valley P https://t.co/j04N921sd                                                             | 2      | 0.381914   | evacuation center shelters |
+      | @CALFIRESANDIEGO: #LilacFire [update] 3 Temporary evacuation shelters have been set up: Fallbrook High School Pechanga Casino Pala Casino East Valley Community Center in Escondido is where the ev... | 3      | 0.380616   | evacuation center shelters |
+      | EVACUATION SHELTERS EL CAJON: Bostonia Park & Recreation Center (1049 Bostonia Street)* SAN MARCOS: Palomar College (1140 West Mission Road)*Small pet-friendly As of Saturday, the only she...        | 4      | 0.376959   | evacuation center shelters |
+      | ***Temporary Evacuation Shelters*** #LilacFire https://t.co/j43zUXR4ze                                                                                                                                 | 5      | 0.373286   | evacuation center shelters |
+
+   - T5
+      | text                                                                                                                                                                                                   | rerank | importance | query                      |
+      |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|------------|----------------------------|
+      | EVACUATION SHELTERS EL CAJON: Bostonia Park & Recreation Center (1049 Bostonia Street)* SAN MARCOS: Palomar College (1140 West Mission Road)*Small pet-friendly As of Saturday, the only she...        | 1      | 1.000000   | evacuation center shelters |
+      | [[462655153,C]] [[462655153,C]] Evacuation Shelters An overnight shelter was set up for residents at the East Valley Community Center on 2245 E. Valley Parkway in Escondido.                          | 2      | 0.999964   | evacuation center shelters |
+      | The Red Cross-operated full-service evacuation shelter is located at East Valley Community Center (2245 E. Valley P... https://t.co/j04N921sd                                                          | 3      | 0.999836   | evacuation center shelters |
+      | @CALFIRESANDIEGO: #LilacFire [update] 3 Temporary evacuation shelters have been set up: Fallbrook High School Pechanga Casino Pala Casino East Valley Community Center in Escondido is where the ev... | 4      | 0.999406   | evacuation center shelters |
+      | Mandatory evacuations were in place for surrounding areas, while evacuation shelters were set up at Fallbrook High School, Pala Casino and East Valley Community Center.                               | 5      | 0.999263   | evacuation center shelters |
+
 
 **3. Summarization Process**
  - Compare different summarization methods
@@ -38,7 +90,9 @@ format: pdf
 
 
 
+<br>
 
+**Requirements**
 - Include all of your analysis in a PDF in your repository called discussion.pdf. The discussion.pdf should be no longer than 4 pages, excluding references, and it will include your comments, graphics, and overall analysis. Your general structure might be something like:
     - exploratory data analysis over your dataset (e.g., collection size, collection characteristics, …)
     - details of engineering decisions such as preprocessing (e.g., discussing how you preprocess documents, did you use techniques like deduplication or other forms of preprocessing, …)
