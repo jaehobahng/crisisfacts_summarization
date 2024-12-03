@@ -1,18 +1,18 @@
 # ✨ Chrisis Summarization ✨
 
-Our python package `crisis_summary` uses a rank --> rerank --> summarization pipeline to summarize what happened in a given day in a specific event to create visibility on important information and provide answers and sources.
+Our Python package, crisis_summary, implements a streamlined rank ➔ rerank ➔ summarization pipeline to distill key events from a specific day within a larger event. This process enhances visibility into critical information, delivering concise answers alongside the sources.
 
 ## Features 
 
 ### Summary Package
 
 #### Key Variables
-- **`eventNo`**: 
-- **`days`**: 
-- **`model`**: 
-- **`rerank`**: 
-- **`summarize`**: 
-- **`save`**: 
+- **`eventNo`**: Which event number to choose form the dataset `(001 ~ 018)`
+- **`days`**: How many days to retrieve from each event
+- **`model`**: Which ranking model to choose `["BM25", "TF_IDF", "PL2", "InL2", "DPH", "DirichletLM", "Hiemstra_LM", "DFRee"]`
+- **`rerank`**: Which re-ranking models to choose `["COLBERT", "T5"]`
+- **`summarize`**: Whether to utilize summarization model `['y','n']`
+- **`save`**: Whether to save final output as a csv file `['y','n']`
 
 #### Algorithm Steps
 1. **Read in Dataset / Queries**: Store in separate dictionary
@@ -100,66 +100,70 @@ Below is a brief overview of our file structure. We have also added a key to den
 📚 - Please see sphinx documentation for a detailed description of this file
 
 ```
-├── 📁 data (🚫)
-├── 📁 docs 
-│   ├── _build (🛠️)
-│   ├── Makefile (🛠️)
-│   ├── conf.py (🛠️)
-│   ├── example.ipynb → demonstrates an example of usage of this package
-│   ├── index.md (🛠️)
-│   ├── make.bat (🛠️)
-│   └── requirements.txt → required dependencies for this package
-├── 📁 images
-│   ├── LSH_Band_Row.png (🎨)
-│   ├── LSH_Shingle_Length.png (🎨)
-│   ├── LSH_number_trees.png (🎨)
-│   ├── Viz1.png (🎨)
-│   ├── Viz2.png (🎨)
-│   ├── bloom_filter_results.png (🎨)
-│   ├── hash_functions_FP_rate.png (🎨)
-│   ├── lsh_improved_params.png (🎨)
-│   └── lsh_s_curve.png (🎨)
-├── 📁 notebooks
-│   ├── EDA.ipynb → this notebook shows the EDA conducted on our text data
-│   ├── exercise.ipynb → solves BloomFilter textbook problems
-│   ├── lsh.ipynb → Used to test our implementation of LSH prior to the final version
-│   ├── test.ipynb → Used to test our implementation of multi probe LSH prior to the final version
-│   ├── visualization_lsh.ipynb → code for LSH graphs 
-│   └── visualizations.ipynb → code for LSH graphs 
-├── 📁 output → the files within this directory are the desired output for each data file for each near-deduplication algorithm
-│   ├── hundredk-LSH_mp.txt
-│   ├── hundredk-baseline.txt
-│   ├── hundredk-lsh.txt
-│   ├── onek-LSH.txt
-│   ├── onek-LSH_mp.txt
-│   ├── onek-baseline.txt
-│   ├── tenk-LSH_mp.txt
-│   ├── tenk-baseline.txt
-│   ├── tenk-lsh.txt
-│   ├── threehundred-LSH_mp.txt
-│   ├── threehundred-baseline.txt
-│   └── threehundred-lsh.txt
-├── 📁 src
-│   ├── 📁 deduplication
-│   │   ├── LSH.py (📚)
-│   │   ├── LSHForest.py (📚)
-│   │   ├── LSHImproved.py (📚)
-│   │   ├── __init__.py (📚)
-│   │   ├── __main__.py (📚)
-│   │   ├── bloom_filter.py (📚)
-│   │   ├── dedup.py (📚)
-│   └── 📁 utils
-│       ├── use_cases.py (📚)
-│       ├── utils.py (📚)
-│       ├── visualization_lsh.py (📚)
-│       └── visualizations.py (📚)
-└── 📁 tests
-│   ├── test_deduplication.py → test cases for each near-deduplication algorithm
-├── discussion.md → describes algorithms in greater detail and answers project questions
-├── poetry.lock (🛠️)
-├── pyproject.toml (🛠️)
+CRISIS_SUMMARY
+│   .env
+│   .gitignore
+│   crisis_log.txt
+│   discussion.qmd
+│   Dockerfile
+│   example.ipynb
+│   LICENSE (🛠️)
+│   poetry.lock (🛠️)
+│   pyproject.toml (🛠️)
+│   README.md
+│   requirements.txt
+│   upload.py
+│   
+├───📁.github
+│   ├───PULL_REQUEST_TEMPLATE.md
+│   │   
+│   ├───📁ISSUE_TEMPLATE
+│   │    ├───bug_report.md
+│   │    ├───documentation.md
+│   │    └───feature_request.md
+│   │       
+│   └───📁workflows
+│        └───ci-cd.yml
+│               
+├───📁assets
+│    ├───jaeho.ipynb
+│       
+├───📁auth (🚫)
+│       crisisfacts.json
+│       
+├───📁crisisfacts (🚫)
+│   │   001.csv
+│   │   
+│   └───📁001
+│        └───2017-12-07
+|                   
+├───📁docs
+│   │           
+│   └───📁_build             
+│       └───📁html
+│           ├───changelog.html
+│           ├───example.html
+│           ├───genindex.html
+│           ├───index.html
+│           ├───objects.inv
+│           ├───py-modindex.html
+│           ├───search.html
+│           └───searchindex.js
+│               
+├───📁output (🚫)
+│    ├───original.csv
+│    └───summary.csv
+│       
+├───📁src
+│    └───📁crisis_summary
+│        ├───summary.py (📚)
+│        ├───__init__.py (📚)
+│        ├───__main__.py (📚)
+│        └───📁utils
+│             └───util.py (📚)
+└───📁tests
+    └───test_crisis.py
 ```
-
 
 ## Contributing
 
