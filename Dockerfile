@@ -5,11 +5,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-# COPY . /app
-COPY ./docs /app
-COPY ./Dockerfile /app/
-COPY ./requirements /app/
-COPY ./upload.py /app
+COPY . /app
 
 # Copy the crisisfacts folder (symlink will resolve to the actual folder)
 
@@ -20,7 +16,12 @@ COPY ./upload.py /app
 RUN pip install --no-cache-dir -r requirements.txt
     # && pip install --upgrade git+https://github.com/allenai/ir_datasets.git@crisisfacts
 
-# EXPOSE 5001
+EXPOSE 5001
 # Run database.py when the container launches to load the data
 # CMD ["python", "upload.py"]
-CMD ["bash", "-c", "python upload.py"]
+CMD ["bash", "-c", "python upload.py && python server.py"]
+
+
+
+# ENTRYPOINT ["sh", "-c", "python file1.py && python file2.py && python file3.py"]
+# CMD ["sh", "-c", "python database.py && /bin/bash"]

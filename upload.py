@@ -1,7 +1,7 @@
 import os
 import pymongo
 import pandas as pd
-
+from cleaning import clean_summary, clean_original
 
 # MongoDB connection
 mongo_host = os.getenv("MONGO_HOST", "localhost")
@@ -20,6 +20,7 @@ def add_csvs_from_folder_to_mongo(folder_path, database):
     """
     # Get the list of all CSV files in the folder
     csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
+    print(csv_files)
     existing_collections = database.list_collection_names()
 
     for csv_file in csv_files:
@@ -34,6 +35,13 @@ def add_csvs_from_folder_to_mongo(folder_path, database):
         # Read the CSV file into a DataFrame
         file_path = os.path.join(folder_path, csv_file)
         df = pd.read_csv(file_path)
+
+
+        if collection_name == 'summary':
+            df = clean_summary(df)
+
+        if collection_name == 'original':
+            df = clean_original(df)        
 
         # Convert the DataFrame to a list of dictionaries
         records = df.to_dict(orient='records')
