@@ -7,10 +7,107 @@ format: pdf
 # Discussion
 
 **1. EDA of Dataset**
- - How many days in each event
- - How many documents in each day/event
- - How long are the documents
- - How many queries for each event (General/Specific)
+
+The **CrisisFACTS Dataset** supports research on information needs during crises through two key components: the Event Dataset and the Query Dataset. The Event Dataset contains over 1.2 million crisis-related documents with metadata like event names, timestamps, and source types, enabling analysis of information flow during events.
+
+The Query Dataset includes 922 user-generated queries linked to events, categorized by intent (e.g., fact-finding or assistance requests) with metadata like indicative terms and descriptions. Together, these datasets provide a foundation for studying information retrieval and summarization in crisis scenarios. The following EDA explores their structure and insights.
+
+- Event Dataset overview
+   ```
+   <class 'pandas.core.frame.DataFrame'>
+   RangeIndex: 1220703 entries, 0 to 1220702
+   Data columns (total 9 columns):
+   ```
+
+   | **#** | **Column**       | **Non-Null Count** | **Dtype**  |
+   |-------|------------------|--------------------|------------|
+   | 0     | event            | 1220703            | object     |
+   | 1     | text             | 1220703            | object     |
+   | 2     | source           | 1220703            | object     |
+   | 3     | source_type      | 1220703            | object     |
+   | 4     | unix_timestamp   | 1220703            | float64    |
+   | 5     | docno            | 1220703            | object     |
+   | 6     | ID               | 1220703            | int64      |
+   | 7     | date             | 1220703            | object     |
+   | 8     | EventName        | 1220703            | object     |
+
+   The **Event Dataset** contains a total of 1,220,703 entries with 9 columns. Each entry corresponds to a document associated with a specific event, identified by the `event` and `EventName` columns. The dataset provides detailed information such as the text content (`text`), its source (`source` and `source_type`), a unique document identifier (`docno`), and the timestamp (`unix_timestamp`) when the document was generated. The dataset is comprehensive and complete, with no missing values in any column.
+   
+   **Event Text Content Overview**
+
+| **Event**          | **Text**                                                                                                                                                                             | **Source Type** |
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|
+| 001     | Live updates: San Diego County fire is 92 percent contained                                                                                                                         | News            |
+| 001     | The Lilac fire now 92 percent contained, Cal Fire officials said Tuesday morning.                                                                                                   | News            |
+| 001     | The county of San Diego has opened a Local Assistance Center to help victims of the fire begin the rebuilding and recovery process.                                                 | News            |
+| 001     | The center is at the Vista branch library on 700 Eucalyptus Avenue and will be open from 9:00 a.m. to 6:00 p.m. Services offered will include crisis counseling and referral services.| News            |
+| 001     | Homeowners also will be able to get information on residential rebuilding and consumer fraud.                                                                                       | News            |
+
+   The `text` column in the event dataset contains detailed descriptions of updates, reports, and announcements related to crisis events. The entries provide various information about the event, such as live updates, recovery processes, or available services. These texts are extracted from sources like Reddit, Twitter, Facebook and News, and it will be used later in this project for information retrieval and summarization.
+
+- Query Dataset overview
+   ```
+   <class 'pandas.core.frame.DataFrame'>
+   RangeIndex: 922 entries, 0 to 921
+   Data columns (total 13 columns):
+   ```
+
+
+   | **#** | **Column**                 | **Non-Null Count** | **Dtype**  |
+   |-------|----------------------------|--------------------|------------|
+   | 0     | query_id                  | 922                | object     |
+   | 1     | text                      | 922                | object     |
+   | 2     | indicative_terms          | 922                | object     |
+   | 3     | trecis_category_mapping   | 814                | object     |
+   | 4     | event_id                  | 922                | object     |
+   | 5     | event_title               | 922                | object     |
+   | 6     | event_dataset             | 409                | object     |
+   | 7     | event_description         | 922                | object     |
+   | 8     | event_trecis_id           | 922                | object     |
+   | 9     | event_type                | 922                | object     |
+   | 10    | event_url                 | 922                | object     |
+   | 11    | ID                        | 922                | int64      |
+   | 12    | EventName                 | 922                | object     |
+
+   The **Query Dataset** consists of 922 entries across 13 columns, where each row represents a query linked to an event. Key columns include `query_id`, `text` (the query itself), and `indicative_terms` (keywords representing the query's focus). While most columns are fully populated, the `trecis_category_mapping` column has some missing values, indicating incomplete categorization for certain queries. Additionally, only 409 queries include information about the dataset they reference (`event_dataset`).
+
+   **Query Text Content Overview**
+
+| **query_id**             | **text**                              | **event_id**        |
+|---------------------------|----------------------------------------|---------------------|
+| CrisisFACTS-General-q001  | Have airports closed                  | CrisisFACTS-001     |
+| CrisisFACTS-General-q002  | Have railways closed                  | CrisisFACTS-001     |
+| CrisisFACTS-Wildfire-q001 | What area has the wildfire burned     | CrisisFACTS-003     |
+| CrisisFACTS-Hurricane-q001| What is the hurricane category        | CrisisFACTS-004     |
+| CrisisFACTS-Tornado-q001  | What storm warnings are active        | CrisisFACTS-017     |
+
+   The query text in the dataset represents user-generated questions or information needs during crisis events. These queries are designed to retrieve relevant information about specific aspects of the crises, such as their impact, status, or recovery efforts. They are categorized into **general queries**, which address broader topics like transportation disruptions or evacuation updates, and **specific queries**, which focus on particular crisis types, such as wildfires, hurricanes, accident, flood and tornadoes. The query text will be used later in the project pipeline to help with our information retrieval.
+   
+- Days, Queries and Documents Count for Each Event
+
+   |  **Event**          | **Event Name**                    | **Unique Days** | **Query Count** | **Document Count** |
+   |---------------------|-----------------------------------|-----------------|-----------------|--------------------|
+   | CrisisFACTS-001     | Lilac Wildfire 2017              | 9               | 52              | 51,015             |
+   | CrisisFACTS-002     | Cranston Wildfire 2018           | 6               | 52              | 30,535             |
+   | CrisisFACTS-003     | Holy Wildfire 2018               | 7               | 52              | 32,489             |
+   | CrisisFACTS-004     | Hurricane Florence 2018          | 14              | 51              | 120,784            |
+   | CrisisFACTS-005     | 2018 Maryland Flood              | 3               | 48              | 13,000             |
+   | CrisisFACTS-006     | Saddleridge Wildfire 2019        | 4               | 52              | 32,362             |
+   | CrisisFACTS-007     | Hurricane Laura 2020             | 2               | 51              | 18,161             |
+   | CrisisFACTS-008     | Hurricane Sally 2020             | 8               | 51              | 72,798             |
+   | CrisisFACTS-009     | Beirut Explosion 2020            | 7               | 56              | 186,900            |
+   | CrisisFACTS-010     | Houston Explosion 2020           | 7               | 56              | 67,956             |
+   | CrisisFACTS-011     | Rutherford TN Floods 2020        | 5               | 48              | 20,868             |
+   | CrisisFACTS-012     | TN Derecho 2020                  | 7               | 49              | 52,546             |
+   | CrisisFACTS-013     | Edenville Dam Fail 2020          | 7               | 48              | 25,547             |
+   | CrisisFACTS-014     | Hurricane Dorian 2019            | 7               | 51              | 116,133            |
+   | CrisisFACTS-015     | Kincade Wildfire 2019            | 7               | 52              | 107,305            |
+   | CrisisFACTS-016     | Easter Tornado Outbreak 2020     | 5               | 51              | 60,885             |
+   | CrisisFACTS-017     | Tornado Outbreak April 2020      | 6               | 51              | 120,393            |
+   | CrisisFACTS-018     | Tornado Outbreak March 2020      | 6               | 51              | 91,026             |
+
+   The merged chart highlights the variability in the number of unique days, queries, and documents across different crisis events in the CrisisFACTS dataset. Events like **Hurricane Florence 2018** and the **Beirut Explosion 2020** stand out with a high number of documents (120,784 and 186,900, respectively), reflecting their significant information impact and media coverage. Conversely, smaller-scale events such as **Hurricane Laura 2020** and the **2018 Maryland Flood** have fewer documents (18,161 and 13,000, respectively). Most events have a consistent number of queries (around 51–56), indicating a balanced level of information need across crises, while the number of unique days varies significantly, with some events spanning only 2 days (e.g., **Hurricane Laura 2020**) and others lasting up to 14 days (e.g., **Hurricane Florence 2018**). 
+
 
 **2. Ranking / Reranking Process**
 
