@@ -20,8 +20,3 @@ EXPOSE 5001
 # Run database.py when the container launches to load the data
 # CMD ["python", "upload.py"]
 CMD ["bash", "-c", "python upload.py && python server.py"]
-
-
-
-# ENTRYPOINT ["sh", "-c", "python file1.py && python file2.py && python file3.py"]
-# CMD ["sh", "-c", "python database.py && /bin/bash"]
