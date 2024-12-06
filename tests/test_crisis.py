@@ -33,9 +33,8 @@ def test_T5_columns():
     final_df, time_taken, memory_used = mine.rank_rerank_T5(model = 'BM25')
 
     final_df.shape[1]
-    
-<<<<<<< HEAD
-    assert final_df.shape[1] == 20
+ 
+    assert final_df.shape[1] == 21
     assert final_df['Event'].unique() == '001'
 
 def test_group_doc():
@@ -56,7 +55,3 @@ def test_group_doc():
     assert 'avg_importance' in grouped_df.columns, "'avg_importance' column missing in grouped DataFrame"
     assert grouped_df['avg_importance'].notnull().all(), "Importance column contains null values"
     assert 'docno_list' in grouped_df.columns, "'docno_list' column missing in grouped DataFrame"
-=======
-    assert final_df.shape[1] == 21
-    assert final_df['Event'].unique() == '001'
->>>>>>> a5f6811 (#1 pytest change of column numbers)

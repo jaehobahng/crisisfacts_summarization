@@ -7,6 +7,10 @@ import time
 from rerankers import Reranker
 import openai
 
+from transformers import pipeline
+from joblib import Parallel, delayed
+import multiprocessing
+
 # $env:PYTHONUTF8 = "1"
 
 import pandas as pd
@@ -104,7 +108,7 @@ class crisis:
 
                         retriever_df['event_title'] = row['event_title']
                         retriever_df['trecis_category_mapping'] = row['trecis_category_mapping']
-        
+                        retriever_df['source'] = retriever_df['docno'].str.extract(r'^(?:[^-]+-){2}([^-]+)')
         
                         if not retriever_df.empty:
                             # Rerank
@@ -135,7 +139,8 @@ class crisis:
                 except:
                     continue
 
-        final_df['formatted_datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
+        final_df['datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
+        final_df['date'] = final_df['datetime'].apply(lambda x: x.date())
         # final_df = final_df.merge(event_df, left_on="Event", right_on="ID", how='left')
 
         min_max = (
@@ -149,6 +154,7 @@ class crisis:
 
         final_df = final_df.merge(min_max, on='request_id', how='left')
         final_df['importance'] = (final_df['rerank_score'] - final_df['min']) / (final_df['max'] - final_df['min'])
+        final_df = final_df.sort_values(by=['importance'], ascending=[False])
 
         # Calculate runtime and memory usage
         end_time = time.time()  # End time
@@ -219,6 +225,7 @@ class crisis:
 
                         result_df['event_title'] = row['event_title']
                         result_df['trecis_category_mapping'] = row['trecis_category_mapping']
+                        result_df['source'] = result_df['docno'].str.extract(r'^(?:[^-]+-){2}([^-]+)')
 
 
                         result_df = result_df.rename(columns={
@@ -231,8 +238,8 @@ class crisis:
 
 
 
-        final_df['formatted_datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
-        # final_df = final_df.merge(event_df, left_on="Event", right_on="ID", how='left')
+        final_df['datetime'] = pd.to_datetime(final_df['unix_timestamp'], unit='s')
+        final_df['date'] = final_df['datetime'].apply(lambda x: x.date())
 
         min_max = (
             final_df.groupby(['request_id'])
@@ -245,6 +252,7 @@ class crisis:
 
         final_df = final_df.merge(min_max, on='request_id', how='left')
         final_df['importance'] = (final_df['score'] - final_df['min']) / (final_df['max'] - final_df['min'])
+        final_df = final_df.sort_values(by=['importance'], ascending=[False])
 
         # Calculate runtime and memory usage
         end_time = time.time()  # End time
@@ -277,6 +285,7 @@ class crisis:
             )
             .reset_index()                                    # Reset index for a clean DataFrame
         )
+
         return result_df
 
 
@@ -348,7 +357,7 @@ class crisis:
         # df = df[['request', 'date', 'datetime', 'question', 'summary_xsum_detail', 'avg_importance']]
 
         # Sort by avg_importance in descending order
-        df_mod = df_mod.sort_values(by='avg_importance', ascending=False)
+        df_mod = df_mod.sort_values(by=['date','avg_importance'], ascending=[True,False])
 
         # Ensure consistent data types
         df_mod['request'] = df_mod['request'].astype(str)
@@ -364,3 +373,46 @@ class crisis:
 
         # Return results and performance metrics
         return df_mod, runtime, memory_used
+
+    def bart_summary(self, df):
+
+        process = psutil.Process(os.getpid())  # Get current process
+        start_memory = process.memory_info().rss  # Memory usage at start (in bytes)
+        start_time = time.time()  # Start time
+        
+        num_cores = multiprocessing.cpu_count()
+        num_batches = num_cores * 2
+        
+        # Split the dataset into batches
+        batches = np.array_split(df['texts'], num_batches)
+        
+        # Function to clean and summarize text
+        def clean_and_summarize(text, summarizer):
+            # Remove hashtags, URLs, and mentions
+            cleaned_text = re.sub(r'#\S+|https?://\S+|@\S+', '', text)
+            # Generate summary
+            summary = summarizer(cleaned_text, max_length=52, min_length=30)
+            return summary[0]['summary_text']
+        
+        # Wrapper function for batch processing
+        def process_batch(texts, summarizer):
+            return [clean_and_summarize(text, summarizer) for text in texts]
+        
+        # Apply parallel processing
+        results = Parallel(n_jobs=num_cores)(
+            delayed(process_batch)(batch.tolist(), pega_summarizer) for batch in batches
+        )
+        
+        # Combine results into the DataFrame
+        df['summary'] = [summary for batch_result in results for summary in batch_result]
+
+        end_time = time.time()  # End time
+        end_memory = process.memory_info().rss  # Memory usage at end (in bytes)
+
+        # Calculate metrics
+        runtime = end_time - start_time
+        memory_used = (end_memory - start_memory) / 1024 / 1024  # Convert bytes to MB
+
+        return df, runtime, memory_used
+
+        
