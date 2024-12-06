@@ -19,7 +19,7 @@ def test_colbert_columns():
 
     final_df.shape[1]
     
-    assert final_df.shape[1] == 22
+    assert final_df.shape[1] == 23
     assert final_df['Event'].unique() == '001'
 
 def test_T5_columns():
@@ -34,6 +34,7 @@ def test_T5_columns():
 
     final_df.shape[1]
     
+<<<<<<< HEAD
     assert final_df.shape[1] == 20
     assert final_df['Event'].unique() == '001'
 
@@ -55,3 +56,7 @@ def test_group_doc():
     assert 'avg_importance' in grouped_df.columns, "'avg_importance' column missing in grouped DataFrame"
     assert grouped_df['avg_importance'].notnull().all(), "Importance column contains null values"
     assert 'docno_list' in grouped_df.columns, "'docno_list' column missing in grouped DataFrame"
+=======
+    assert final_df.shape[1] == 21
+    assert final_df['Event'].unique() == '001'
+>>>>>>> a5f6811 (#1 pytest change of column numbers)

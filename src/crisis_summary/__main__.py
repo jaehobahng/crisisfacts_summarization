@@ -41,49 +41,47 @@ if __name__ == "__main__":
     parser.add_argument("-e", "--eventNo", required=True, help="Event numbers to retrieve")
     parser.add_argument("-d", "--days", required=False, help="Number of days to retrieve")
     parser.add_argument("-m", "--model", required=False, help="Ranking model")
-    parser.add_argument("-r", "--rerank", required=False, help="Reranking model")
-    parser.add_argument("-u", "--summarize", required=False, help="Summarization model")
+    parser.add_argument("-r", "--rerank", required=False, help="reranking model")
+    parser.add_argument("-u", "--summarize", required=False, help="y/n for gpt summarization")
     parser.add_argument("-s", "--save", required=False, help="y/n to save output")
-    parser.add_argument("-t", "--eval", required=False, help="y/n to evaluation")
 
     args = parser.parse_args()
 
     default_days = 1
     default_model = 'BM25'
     default_rerank = 'COLBERT'
-    default_summary = 'GPT'
 
     # Assign either the provided values or the default ones
     days = int(args.days) if args.days is not None else default_days
     model = args.model if args.model is not None else default_model
     rerank = args.rerank if args.rerank is not None else default_rerank
-    sum = args.summarize if args.summarize is not None else default_summary
+
 
     eventsMeta = get_eventsMeta(eventNoList=args.eventNo, days=days)
     
     mine = crisis(events = eventsMeta)
     
-    # Ranking and Re-ranking
+
     if rerank == 'COLBERT':
         logging.info(f"Using Ranking / Re-ranking method:{model}/{rerank}")
         rank_df, time_taken, memory_used = mine.rank_rerank_colbert(model = model)
         final_df = mine.group_doc(rank_df)
-
+        if args.summarize == 'y':
+            final_df, time_gpt, memory_gpt = mine.gpt_summary(final_df, api)
     elif rerank == 'T5':
         logging.info(f"Using Ranking / Re-ranking method:{model}/{rerank}")
         rank_df, time_taken, memory_used = mine.rank_rerank_T5(model = model)
         final_df = mine.group_doc(rank_df)
-
+        if args.summarize == 'y':
+            final_df, time_gpt, memory_gpt = mine.gpt_summary(final_df, api)
     else:
         print("Choose either 'COLBERT' or 'T5'")
 
-    # Summarization
-    if sum == 'GPT':
-        final_df, time_gpt, memory_gpt = mine.gpt_summary(final_df, api)
-    elif sum == 'bart':
-        final_df, time_gpt, memory_gpt = mine.bart_summary(final_df)
-
-    # Save
+    if args.summarize == 'y':
+        summary = 'summary'
+    else:
+        summary = 'nosum'
+    
     if args.save == 'y':
         final_df.to_csv(f"./output/{model}_{rerank}_{summary}.csv", encoding='utf-8')
     
