@@ -178,12 +178,44 @@ The Query Dataset includes 922 user-generated queries linked to events, categori
 
 
 **3. Summarization Process**
- - Compare different summarization methods
-    - Don't think there will be a metric so comparing one example across all methods?
+Having Ranked-Reranked dataset, we experimented with three pre-trained LLMs for the summarization process: Facebook BART, Google Pegasus, and OpenAI GPT. The dataset is groupby request ID, query ID, and event attributes to get a grouped document text. This grouped document text will be passed into the summarization model to get a one single text regarding that specific request ID, date, and query. To choose which model to use for the package, we focused on one event for comparison.
 
-**5. Evaluation**
- - Wiki / NIST evaluation method given in TREC
- - If we have time find if there is a way to measure redundancy
+Facebook BART and Google Pegasus are implemented through Hugging Face Transformers. Grouped document texts are cleaned, removing hashtags, URLs, and mentions. OpenAI GPT, however, adopts a slightly different approach. Since we have a `question` column, we asked the model to answer that question using the grouped document text. If the question is answerable, we asked the model to produce the most concise answer as possible. If not, it returns "unanswerable".
+
+ - Summarization Process Example
+
+Orignal Text: 
+-20: A crash has the two right lanes blocked. in #SanDiego on 8 EB at Severin Dr, stopped traffic back to 125, delay of 3 mins #SDtraffic A crash has the three right lanes blocked. in #SanDiego on 8 EB at Severin Dr, stopped traffic back to Jackson Dr, delay of 7 mins A flipped over car has the two right lanes blocked. in #SanDiego on I-805 NB after Murray Rdg Rd, stopped traffic back to 8, delay of 9 mins Accident, three lanes blocked in #SanDiego on 8 EB at Severin Dr, stopped traffic back to Jackson Dr, delay of 7 mins #SDtraffic Accident, left lane blocked in #SanDiego on 15 SB before 5, stop and go traffic back to Ocean View Blvd, delay of 3 mins #SDtraffic 
+
+-2: A UH-1Y Venom refills its bucket firefighting system with water from Lake ONeill at Camp Pendleton, #California. T https://t.co/TkJIJfrh7P fema:RT DeptofDefense: A UH-1Y Venom refills its bucket firefighting system with water from Lake ONeill at Camp Pe https://t.co/7lCpQdMoco when you go to take a sip of water and you end up drinking the whole bottle my cup is filled with this tall glass of water en Solana Beach, California https://t.co/DzXhVz3BkL North County is ripe for new development and more fires, a neverending water fight finally ended and more in our weekly roundup of news from North County. 
+
+|    | question                              | query                    | bart_summary                                                                            | pega_summary                                                                             | gpt_summary                                                                                                                                                                                   |
+|---:|:--------------------------------------|:-------------------------|:----------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 20 | What roads are blocked / closed       | tree block road closures | Motorists are being warned to expect delays after a number of crashes on the I-805      | Accident, three lanes blocked in on 8 EB at Severin Dr, stopped traffic back to          | The two right lanes on 8 EB at Severin Dr, the three right lanes on 8 EB at Severin Dr, the two right lanes on I-805 NB after Murray Rdg Rd, and the left lane on 15 SB before 5 are blocked. |
+|  2 | Have water supplied been contaminated | water supply             | Firefighters in California have been using water from a nearby lake to fight wildfires. | A UH-1Y Venom refills its bucket firefighting system with water from Lake ONeill at Camp | unanswerable                                                                                                                                                                                  |
+
+**4. Evaluation**
+
+To evaluate and compare the performance of these summarization models, we followed the methodology outlined in the referenced paper. Specifically, we utilized a Wikipedia summary as a ground truth reference and assessed the model outputs using both BERTScore and ROUGE metrics. Each metric provided precision, recall, and F1 scores, enabling a comprehensive evaluation of the models' performance. As shown in tables below, OpenAI GPT model performed the best for our project due to its speed, minimal memory usage, and ability to produce concise summaries. In terms of evaluation, there was not much of difference across the model. BERTScore uses the contextual embeddings so we got higher scores because the query/questions are related to the grouped document texts. Yet ROUGE measures overlaps using n-grams which will decrease the score since the models may not use the same words as the original text. Ultimately, we decided to use OpenAI GPT for our project.
+
+ - Time and Memory Usage Table
+
+| Model         | memory     | time      |
+|---------------|------------|-----------|
+| Facebook BART | 1362.03    | 479s      | 
+| Google Pegasus| 59.53      | 615s      | 
+| OpenAI GPT    | 36.47      | 187s      | 
+
+ - Evaluation Table
+
+| Model         | Metric     | Precision | Recall | F1 Score |
+|---------------|------------|-----------|--------|----------|
+| Facebook BART | BERTScore  | 0.72      | 0.75   | 0.73     |
+| Google Pegasus| BERTScore  | 0.72      | 0.74   | 0.73     |
+| OpenAI GPT    | BERTScore  | 0.70      | 0.73   | 0.71     |
+| Facebook BART | ROUGE      | 0.006     | 0.32   | 0.01     |
+| Google Pegasus| ROUGE      | 0.004     | 0.29   | 0.01     |
+| OpenAI GPT    | ROUGE      | 0.01      | 0.15   | 0.03     |
 
 **5. Challenges / Further improvements**
 Our pipeline, consisting of ranking, re-ranking, and summarization steps, presented challenges when experimenting with every possible combination and hyperparameter to optimize performance. Adjustments ranged from straightforward changes, such as swapping models at each step, to more intricate refinements, including tweaking hyperparameter values to decimal precision or performing prompt engineering for the LLM-powered summarization model. Given the current output often includes summaries labeling questions as "unanswerable," it is crucial to ensure the model's robustness. This would help build user confidence in the system's responses, particularly when it determines that a query truly cannot be answered.
