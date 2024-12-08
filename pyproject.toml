@@ -21,6 +21,7 @@ sphinx-autoapi = "^3.3.3"
 sphinx-rtd-theme = "^3.0.2"
 pytest = "^8.3.3"
 python-dotenv = "^1.0.1"
+nbsphinx = "^0.9.5"
 
 [tool.poetry.dev-dependencies]
 [tool.semantic_release]

@@ -91,9 +91,12 @@ Example Terminal Code:
 
 Below is a brief overview of our file structure. We have also added a key to denote additional information about each file
 
-🚫 - Part of .gitignore and not included in the repo 
+🚫 - Part of .gitignore and not included in the repo
+
 🛠️ - Part of sphinx or package build, decription of file is not required 
+
 🎨 - Images used in discussion.md, please see this file for further explanation
+
 📚 - Please see sphinx documentation for a detailed description of this file
 
 ```
@@ -167,7 +170,6 @@ CRISIS_SUMMARY
 Clone and set up the repository with
 
 ```bash
-git clone TODO && cd deduplication
 pip install -e ".[dev]"
 ```
 
