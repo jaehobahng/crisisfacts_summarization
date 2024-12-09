@@ -2,6 +2,10 @@
 
 Our Python package, crisis_summary, implements a streamlined rank ➔ rerank ➔ summarization pipeline to distill key events from a specific day within a larger event. This process enhances visibility into critical information, delivering concise answers alongside the sources.
 
+## Preparation
+For the package to work seemlessly, you must download data from the following google drive and place the contents in the crisisfacts folder.
+Data can be downloaded [here](https://drive.google.com/drive/folders/12rDWt6NVdTkMI6MXMiYFTLlFj9bgR6rX?usp=sharing).
+
 ## Features 
 
 ### Summary Package
