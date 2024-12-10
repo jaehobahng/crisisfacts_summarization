@@ -4,8 +4,8 @@ Our Python package, crisis_summary, implements a streamlined rank ➔ rerank ➔
 
 ## Preparation
 ### Data
-For the package to work seemlessly, you must download data from the following google drive and place the contents in the crisisfacts folder.
-Data can be downloaded [here](https://drive.google.com/drive/folders/12rDWt6NVdTkMI6MXMiYFTLlFj9bgR6rX?usp=sharing).
+For the package to work seemlessly, you must downlad data from the following google drive and place the contents in the crisisfacts folder.
+Data can be downloaded [here](https://drive.google.com/drive/folders/12rDWt6NVdTkMI6MXMiYFTLlFj9bgR6rX?usp=sharing). A subset of the data is in crisisfacts to help your understanding.
 
 ### API keys
 Check .env.example file to create an .env file to hold OpenAI API keys. These keys will be used during summarization but will not be required for ranking and re-ranking.
