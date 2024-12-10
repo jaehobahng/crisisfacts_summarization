@@ -11,12 +11,13 @@ Data can be downloaded [here](https://drive.google.com/drive/folders/12rDWt6NVdT
 Check .env.example file to create an .env file to hold OpenAI API keys. These keys will be used during summarization but will not be required for ranking and re-ranking.
 
 ### Dataset Credentials
-```{.python}
+Run the following code in example.ipynb to fill in credentials for running the pyterrier package.
+```python
 credentials = {
-    "institution": "Georgetown University", # University, Company or Public Agency Name
-    "contactname": "JaeHo Bahng", # Your Name
-    "email": "jaheo127@gmail.com", # A contact email address
-    "institutiontype": "Academic" # Either 'Research', 'Industry', or 'Public Sector'
+    "institution": "", # University, Company or Public Agency Name
+    "contactname": "", # Your Name
+    "email": "", # A contact email address
+    "institutiontype": "" # Either 'Research', 'Industry', or 'Public Sector'
 }
 
 # Write this to a file so it can be read when needed
@@ -77,7 +78,7 @@ Explore [Usage Explanation Notebook](./example.ipynb) for a more detailed explan
 ### How to run package in script or notebook
 #### Running BM25 --> ColBERT --> GPT Summary
 
-```{python}
+```python
 from crisis_summary.summary import crisis
 from crisis_summary.utils.util import get_eventsMeta
 from dotenv import load_dotenv
