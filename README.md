@@ -1,10 +1,31 @@
-# ✨ Chrisis Summarization ✨
+# ✨ Crisis Summarization ✨
 
 Our Python package, crisis_summary, implements a streamlined rank ➔ rerank ➔ summarization pipeline to distill key events from a specific day within a larger event. This process enhances visibility into critical information, delivering concise answers alongside the sources.
 
 ## Preparation
+### Data
 For the package to work seemlessly, you must download data from the following google drive and place the contents in the crisisfacts folder.
 Data can be downloaded [here](https://drive.google.com/drive/folders/12rDWt6NVdTkMI6MXMiYFTLlFj9bgR6rX?usp=sharing).
+
+### API keys
+Check .env.example file to create an .env file to hold OpenAI API keys. These keys will be used during summarization but will not be required for ranking and re-ranking.
+
+### Dataset Credentials
+```{.python}
+credentials = {
+    "institution": "Georgetown University", # University, Company or Public Agency Name
+    "contactname": "JaeHo Bahng", # Your Name
+    "email": "jaheo127@gmail.com", # A contact email address
+    "institutiontype": "Academic" # Either 'Research', 'Industry', or 'Public Sector'
+}
+
+# Write this to a file so it can be read when needed
+import json
+import os
+
+with open('./auth/crisisfacts.json', 'w') as f:
+    json.dump(credentials, f)
+```
 
 ## Features 
 
